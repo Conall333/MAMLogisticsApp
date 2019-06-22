@@ -1,0 +1,18 @@
+{
+  "name": "testproject",
+  "version": "1.0.0",
+  "description": "project to learn electron",
+  "main": "main.js",
+  "scripts": {
+    "start": "../../mamTruckApplication/node_modules/.bin/electron ."
+  },
+  "author": "Conall McCarthy",
+  "license": "ISC",
+  "dependencies": {
+    "@iota/converter": "^1.0.0-beta.12",
+    "@iota/core": "^1.0.0-beta.12",
+    "@iota/extract-json": "^1.0.0-beta.12",
+    "@iota/mam": "^0.7.2",
+    "electron": "^5.0.2"
+  }
+}

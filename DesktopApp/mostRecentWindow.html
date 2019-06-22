@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Most Recent Message Feed</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+</head>
+<body>
+   <nav>
+       <div class="nav-wrapper deep-purple lighten-1">
+           <a class="brand-logo center">Incoming Messages</a>
+       </div>
+   </nav>
+   <div class="container">
+    <ul>
+
+    </ul>
+    <div>
+
+    <script>
+        const electron = require('electron/electron');
+        const {ipcRenderer} = electron;
+        const ul = document.querySelector('ul');
+
+        //add item
+        ipcRenderer.on('item:recent', function(e, item){
+            // ul.className = 'collection  cyan lighten-5'
+            const nestedUl = document.createElement('ul');
+            const messageText = document.createTextNode("Message id: " + item.message);
+            const temperatureText = document.createTextNode("Temperature: " + item.dummyTemp);
+            const timestampText = document.createTextNode("TimeStamp: " + item.timestamp);
+
+
+            const li = document.createElement('li');
+            const li2 = document.createElement('li');;
+            const li3 = document.createElement('li');
+
+            liArray = [li,li2,li3]
+
+            for (i=0; i < liArray.length; i++){
+                liArray[i].className = 'collection-item cyan lighten-5'
+            }
+
+            li.appendChild(messageText);
+            li2.appendChild(temperatureText);
+            li3.appendChild(timestampText);
+
+            ul.appendChild(nestedUl);
+
+            nestedUl.className = 'collection'
+
+            nestedUl.appendChild(li);
+            nestedUl.appendChild(li2);
+            nestedUl.appendChild(li3);
+        
+            
+        });
+
+        // clear items
+        ipcRenderer.on('item:clear', function(){
+            ul.innerHTML = "";
+            if (ul.children.length == 0){
+               ul.className = ''
+           }
+        });
+
+    </script>
+    
+</body>
+</html>
