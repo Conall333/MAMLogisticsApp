@@ -8,6 +8,8 @@ var con = mysql.createConnection({
     port: '3306'
 });
 
+
+
 con.connect(function(err) {
     if (err) {
         console.error('error connecting: ' + err.stack);
@@ -22,7 +24,7 @@ con.connect(function(err) {
 
 });
 
-/*
+
 con.query("INSERT INTO global_shipments (global_id, stage_id) VALUES ('value1', 'value2');",[], function (error, results, fields) {
     if (error) throw error;
     // connected!
@@ -38,13 +40,14 @@ con.query("INSERT INTO global_shipments (global_id, stage_id) VALUES (?, ?);", [
     console.log(results)
 });
 
-con.query('SELECT * from global_shipments where global_id = ?',['value1'], function (error, results, fields) {
+
+con.query('SELECT g.global_id, g.stage_id from global_shipments as g join stage_shipments as s on g.stage_id = s.stage_id WHERE s.active = ?',['Y'], function (error, results, fields) {
     if (error) throw error;
     console.log(results);
 });
 
 
-
+/*
 
 
 con.query('DELETE FROM global_shipments;', function (error, results, fields) {
@@ -81,7 +84,7 @@ con.query('SELECT * from stage_shipments;', function (error, results, fields) {
 });
 
 
- */
+
 // DELETE FROM stage_shipments;
 // DELETE FROM global_shipments;
 // DELETE FROM daily_roots;
@@ -93,6 +96,6 @@ con.query('DELETE FROM recent_root', function (error, results, fields) {
 });
 
 
-
+*/
 
 con.end();

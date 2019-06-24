@@ -1,6 +1,7 @@
-const electron = require("electron/electron");
+const electron = require("electron");
 const url = require("url");
 const path = require("path");
+const mysql = require('mysql');
 
 
 const {app, BrowserWindow, Menu, ipcMain} = electron;
@@ -9,6 +10,9 @@ const {app, BrowserWindow, Menu, ipcMain} = electron;
 let mainWindow;
 let addWindow;
 let mostRecentWindow;
+let infoWindow;
+channelKey = "";
+
 
 // Listen for the app to be ready
 
@@ -33,6 +37,9 @@ app.on('ready', function(){
         app.quit();
     });
 
+    createInfoWindow();
+    getShipmentIds();
+
     // build menu from template
     const MainMenu = Menu.buildFromTemplate(mainMenuTemplate)
     // insert the menu
@@ -49,9 +56,11 @@ function createAddWindow(){
         },
         width: 300,
         height: 400,
-        title: 'AdditionalWindow'
+        x: 10,
+        y: 485,
+        title: 'Enter Stage Id'
 
-    })
+    });
 
     // load html into window
     addWindow.loadURL(url.format({
@@ -63,6 +72,35 @@ function createAddWindow(){
     // free memory
     addWindow.on('close', function(){
         addWindow = null;
+    })
+
+}
+
+
+function createInfoWindow(){
+    // create new window
+    infoWindow = new BrowserWindow({
+        webPreferences: {
+            nodeIntegration: true
+        },
+        width: 500,
+        height: 300,
+        x: 10,
+        y: 180,
+        title: 'AdditionalWindow'
+
+    })
+
+    // load html into window
+    infoWindow.loadURL(url.format({
+        pathname: path.join(__dirname, "infoWindow.html"),
+        protocol: 'file:',
+        slashes: true
+    }));
+
+    // free memory
+    infoWindow.on('close', function(){
+        infoWindow = null;
     })
 
 }
@@ -98,12 +136,164 @@ function createMostRecentWindow(){
 // catch item:add
 ipcMain.on('item:sendRequest', function(e, item){
     console.log(item);
-    let request = "root_" + item.amount + "_" + item.format;
-    console.log(request);
-    sendRequest(request);
-    manageResponse();
+
+    let id = item.id;
+    let range = item.range;
+    let date = item.date;
+
+
+    getRootAndKey(id,range,date);
+
+
+
+
+    //todo create function to send request to db
     addWindow.close();
 });
+
+
+
+
+function getRootAndKey(stage_id,range,date) {
+
+
+    var con = mysql.createConnection({
+        host: 'remotemysql.com',
+        user: 'cX2lcjOkuC',
+        password: 'rS58Cs8XrH',
+        database: 'cX2lcjOkuC',
+        port: '3306'
+    });
+
+    con.connect(function (err) {
+        if (err) {
+            console.error('error connecting: ' + err.stack);
+            return;
+        } else {
+            console.log('connected as id ' + con.threadId);
+
+        }
+
+
+    });
+
+
+    let received_root = "";
+    let received_key = "";
+
+    con.query('SELECT channel_key, root from stage_shipments WHERE stage_id = ?', [stage_id], function (error, results, fields) {
+        if (error) throw error;
+        console.log(results);
+
+        received_key = results[0].channel_key;
+        received_root = results[0].root;
+
+
+        if (range === "all") {
+            fetchAll(received_key, received_root);
+            con.end()
+        } else if (range === "day") {
+
+            con.query('SELECT root from daily_roots WHERE stage_id = ? AND date = ?', [stage_id, date], function (error, results, fields) {
+                if (error) throw error;
+                console.log(results);
+
+                received_root = results[0].root;
+                fetchAll(received_key, received_root)
+                con.end()
+
+            });
+
+
+        } else if (range === "recent") {
+
+
+            con.query('SELECT root from recent_root WHERE stage_id = ?', [stage_id], function (error, results, fields) {
+                if (error) throw error;
+                console.log(results);
+
+                received_root = results[0].root;
+                fetchAll(received_key, received_root);
+                con.end()
+
+            });
+
+        }
+
+    });
+
+}
+
+
+
+function getShipmentIds() {
+
+
+    let con = mysql.createConnection({
+        host: 'remotemysql.com',
+        user: 'cX2lcjOkuC',
+        password: 'rS58Cs8XrH',
+        database: 'cX2lcjOkuC',
+        port: '3306'
+    });
+
+    con.connect(function (err) {
+        if (err) {
+            console.error('error connecting: ' + err.stack);
+            return;
+        } else {
+            console.log('connected as id ' + con.threadId);
+
+        }
+
+
+    });
+    con.query('SELECT DISTINCT global_id from global_shipments', function (error, results, fields) {
+        if (error) throw error;
+        console.log(results);
+
+        let values = {};
+        let stage_id_array = [];
+
+        for (let i = 0; i < results.length; i++) {
+
+            values.global_id = results[i].global_id;
+
+            console.log(results[i].global_id);
+
+            con.query('SELECT stage_id from global_shipments WHERE global_id = ?', [results[i].global_id], function (error, res, fields) {
+                if (error) throw error;
+                for (let z = 0; z < res.length; z++) {
+
+                    stage_id_array.push(res[z].stage_id);
+
+                }
+
+                values.stage_ids = stage_id_array;
+                mainWindow.webContents.send('info:Shipments', values);
+                console.log(values);
+                values = {};
+                stage_id_array = [];
+
+
+            });
+
+        }
+
+        con.end()
+
+    });
+
+}
+
+
+
+
+
+
+
+
+
 
 
 
@@ -133,13 +323,6 @@ const mainMenuTemplate = [
                 }
             },
                 {
-                    label: 'Fetch Last 10 Messages',
-                    click(){
-                        mainWindow.webContents.send('item:clear');
-                        fetchLast10();   
-                    }
-                },
-                {
                     label: 'Clear Incomming Window',
                     click(){
                         mostRecentWindow.webContents.send('item:clear');
@@ -149,7 +332,7 @@ const mainMenuTemplate = [
 
                 {
                     label: 'Quit',
-                    accelerator: process.platform == 'darwin' ? 'Commmand+Q' : 'Ctrl+Q',
+                    accelerator: process.platform === 'darwin' ? 'Commmand+Q' : 'Ctrl+Q',
                     click(){
                         app.quit();
                     }
@@ -159,7 +342,7 @@ const mainMenuTemplate = [
 ];
 
 // if mac, add empty object to menu
-if(process.platform == 'darwin'){
+if(process.platform === 'darwin'){
     // unshift adds to beginig of array
     mainMenuTemplate.unshift({});
 }
@@ -194,7 +377,6 @@ const config = require('./configR');
 const Iota = require(path.join(config.path,'core'));
 const Converter = require(path.join(config.path,'converter'));
 const {asciiToTrytes, trytesToAscii} = require(path.join(config.path,'converter'));
-const PubResponse = require('./PubResponse.js');
 const extractJSON =  require(path.join(config.path,'extract-json'));
 const Mam = require(path.join(config.path,'mam','lib','mam.client.js'));
 const mode = config.mode;
@@ -204,12 +386,10 @@ const provider = config.provider;
 // using the same seed will not overwrite previously published messages
 const seed =config.seed;
 // root Address (channel id)
-rootOfPublishingDevice = "";
-channelKey = "";
 messageCount = 0;
 
 // inititalize state of mam
-let mamState = Mam.init(provider,seed);
+Mam.init(provider,seed);
 
 const iota = Iota.composeAPI({
     provider: config.provider
@@ -219,45 +399,23 @@ const iota = Iota.composeAPI({
 
 
 
-
-
-function manageResponse() {
-
-            //TODO send request to db with global id or stage id
-
-            //TODO use values in response to start fetching messages
-
-            // TODO  rootOfPublishingDevice  && channelKey
-
-            rootOfPublishingDevice = fs.readFileSync(path.join(__dirname, '/received_root.txt'), 'UTF-8');
-            channelKey = fs.readFileSync(path.join(__dirname, '/received_key.txt'), 'UTF-8');
-            console.log("Started Fetching Messages... \n");
-            fetchAll();
-
-
-
-}
-
-
-
-
-
-async function fetchAll() {
+async function fetchAll(key,received_root) {
     //output once fetch is completed
     try{
-    
-    const result = await Mam.fetchSingle(rootOfPublishingDevice, mode, channelKey);
+    console.log("Fetching...")
+    const result = await Mam.fetchSingle(received_root, mode, key);
     messageCount += 1;
-    rootOfPublishingDevice = result.nextRoot;
+    let next_root = result.nextRoot;
     console.log('Fetched and parsed ==>', JSON.parse(trytesToAscii(result.payload)));
     item = JSON.parse(trytesToAscii(result.payload));
     mainWindow.webContents.send('item:add', item);
-    fetchAll();
+    fetchAll(key,next_root);
     
     }
-    catch{
+    catch(e){
         console.log("no new message to fetch");
-        setTimeout(intervalForListening,  config.fetchInterval);
+        console.log(e)
+        //setTimeout(intervalForListening,  config.fetchInterval);
     }
 }
 

@@ -9,48 +9,37 @@
     <div class="container">
         <form>
             <div>
-                <label>Enter Item</label>
-                <input type="number" id="item" autofocus>
+                <label>Enter Id</label>
+                <input id="item" autofocus>
 
             </div>
             <div>
                 <p>
                     <label>
-                        <input name="group1" type="radio" id="minutes" checked />
-                        <span>Minutes</span>
+                        <input name="group1" type="radio" id="recent" checked />
+                        <span>Most Recent Message</span>
                     </label>
                 </p>
                 <p>
                     <label>
-                        <input name="group1" type="radio" id="hours" checked />
-                        <span>Hours</span>
+                        <input name="group1" type="radio" id="all" checked />
+                        <span>All Messages</span>
                     </label>
                 </p>
                 <p>
                     <label>
-                        <input name="group1" type="radio" id="days" />
-                        <span>Days</span>
+                        <input name="group1" type="radio" id="day" checked />
+                        <span>Date</span><input type="date" id="date">
                     </label>
                 </p>
-                <p>
-                    <label>
-                        <input name="group1" type="radio" id="weeks"  />
-                        <span>Weeks</span>
-                    </label>
-                </p>
-                <p>
-                    <label>
-                        <input name="group1" type="radio" id="months" />
-                        <span>Months</span>
-                    </label>
-                </p>
+
             </div>
             <button class="btn waves-effect waves-light" type="submit"> Send Request</button>
         </form>
     </div>
 
     <script>
-        const electron = require('electron/electron');
+        const electron = require('electron');
         const {ipcRenderer} = electron;
 
         const form = document.querySelector('form');
@@ -60,18 +49,17 @@
         function submitForm(e){
             e.preventDefault();
 
-
             let radios = document.getElementsByName('group1');
 
-          let values ={};
+            values={};
 
             for (let i = 0, length = radios.length; i < length; i++) {
                 if (radios[i].checked) {
                     values = {
-                        amount: document.querySelector('#item').value,
-                        format: radios[i].id
+                        id: document.querySelector('#item').value,
+                        range: radios[i].id,
+                        date: document.querySelector('#date').value
                         };
-
                     break;
                 }
             }

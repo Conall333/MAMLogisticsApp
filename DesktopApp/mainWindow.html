@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Main Messege Feed</title>
+    <title>Message Feed</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 
 </head>
@@ -18,7 +18,7 @@
     <div>
 
     <script>
-        const electron = require('electron/electron');
+        const electron = require('electron');
         const {ipcRenderer} = electron;
         const ul = document.querySelector('ul');
 
@@ -26,16 +26,23 @@
         ipcRenderer.on('item:add', function(e, item){
             // ul.className = 'collection  cyan lighten-5'
             const nestedUl = document.createElement('ul');
-            const messageText = document.createTextNode("Message id: " + item.message);
-            const temperatureText = document.createTextNode("Temperature: " + item.dummyTemp);
+            const messageText = document.createTextNode("Message No: " + item.message);
+            const temperatureText = document.createTextNode("Temperature: " + item.temperature);
+            const humidityText = document.createTextNode("Humidity: " + item.humidity);
             const timestampText = document.createTextNode("TimeStamp: " + item.timestamp);
+            const routeNameText = document.createTextNode("RouteName: " + item.routeName);
+            const infoText = document.createTextNode("Additional Information: " + item.information);
+
 
 
             const li = document.createElement('li');
             const li2 = document.createElement('li');
             const li3 = document.createElement('li');
+            const li4 = document.createElement('li');
+            const li5 = document.createElement('li');
+            const li6 = document.createElement('li');
 
-            liArray = [li,li2,li3]
+            liArray = [li,li2,li3,li4,li5,li6];
 
             for (i=0; i < liArray.length; i++){
                 liArray[i].className = 'collection-item cyan lighten-5'
@@ -43,7 +50,10 @@
 
             li.appendChild(messageText);
             li2.appendChild(temperatureText);
+            li6.appendChild(humidityText);
             li3.appendChild(timestampText);
+            li4.appendChild(routeNameText);
+            li5.appendChild(infoText);
 
             ul.appendChild(nestedUl);
 
@@ -52,6 +62,9 @@
             nestedUl.appendChild(li);
             nestedUl.appendChild(li2);
             nestedUl.appendChild(li3);
+            nestedUl.appendChild(li4);
+            nestedUl.appendChild(li5);
+            nestedUl.appendChild(li6);
 
             
 
@@ -63,7 +76,7 @@
         // clear items
         ipcRenderer.on('item:clear', function(){
             ul.innerHTML = "";
-            if (ul.children.length == 0){
+            if (ul.children.length === 0){
                ul.className = ''
            }
         });

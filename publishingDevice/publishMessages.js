@@ -2,7 +2,6 @@
 const fs = require('fs');
 const path = require('path');
 const config = require('./configP');
-const moment = require('moment');
 var mysql = require('mysql');// time node js library
 
 modules_path = config.path;
@@ -160,7 +159,6 @@ const publishMessage = async () => {
     const root = await publish({
         // addressCounter can publish multiple messages here
         message: currentMessage,
-        globalId: config.globalId,
         stageId: config.stageId,
         routeName: config.routeName,
         timestamp: (new Date()).toLocaleString(),
@@ -181,8 +179,33 @@ function startPublishing(){
         .then(async root => {
 
             if (messageCount === 228){
-                console.log("Exiting...");
-                process.exit(1)
+
+                var con = mysql.createConnection({
+                    host: 'remotemysql.com',
+                    user: 'cX2lcjOkuC',
+                    password: 'rS58Cs8XrH',
+                    database: 'cX2lcjOkuC',
+                    port: '3306'
+                });
+
+
+                con.connect(function(err) {
+                    if (err) {
+                        console.error('error connecting: ' + err.stack);
+                        return;
+                    }
+
+
+                con.query("UPDATE stage_shipments SET completed = ? AND active = ? WHERE stage_id = ?;", ['Y', 'N', config.stageId], function (error, results, fields) {
+                    if (error) throw error;
+                    console.log("Status UPDATED");
+                    console.log("Exiting...");
+                    process.exit(1)
+
+                    });
+
+            });
+
             }
 
             //output once fetch is completed
@@ -223,7 +246,7 @@ function startPublishing(){
                         let stage_id = config.stageId;
                         let timestamp = { toSqlString: function() { return 'CURRENT_TIMESTAMP()'; } };
 
-                        con.query("INSERT INTO stage_shipments (stage_id, route_name, channel_key, root, date, sensor_id) VALUES (?, ?, ?, ?, ?, ?);", [stage_id, route_name, channel_key, channel_root, timestamp , sensor_id],function (error, results, fields) {
+                        con.query("INSERT INTO stage_shipments (stage_id, route_name, channel_key, root, date, sensor_id, active, completed) VALUES (?, ?, ?, ?, ?, ?, ?, ?);", [stage_id, route_name, channel_key, channel_root, timestamp , sensor_id,'Y','N'],function (error, results, fields) {
                             if (error) throw error;
                             console.log("STAGE_SHIPMENTS DETAILS UPDATED")
                         });

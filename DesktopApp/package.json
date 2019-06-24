@@ -4,7 +4,7 @@
   "description": "project to learn electron",
   "main": "main.js",
   "scripts": {
-    "start": "../../mamTruckApplication/node_modules/.bin/electron ."
+    "start": "electron ."
   },
   "author": "Conall McCarthy",
   "license": "ISC",
@@ -13,6 +13,7 @@
     "@iota/core": "^1.0.0-beta.12",
     "@iota/extract-json": "^1.0.0-beta.12",
     "@iota/mam": "^0.7.2",
-    "electron": "^5.0.2"
+    "electron": "^5.0.5",
+    "mysql": "latest"
   }
 }
