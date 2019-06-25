@@ -3,6 +3,8 @@
 <head>
     <title>Shipping Information</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 
 </head>
 <body>
@@ -17,63 +19,50 @@
 
         </ul>
     </div>
-</body>
-
-
-
-
 
 
 <script>
-    <script>
+
     const electron = require('electron');
     const {ipcRenderer} = electron;
     const ul = document.querySelector('ul');
 
+
     //add item
-    ipcRenderer.on('info:shipments', function(e, item){
+    ipcRenderer.on('item:shipments', function(e, item){
         // ul.className = 'collection  cyan lighten-5'
         const nestedUl = document.createElement('ul');
-        const messageText = document.createTextNode("Message No: " + item.message);
-        const temperatureText = document.createTextNode("Temperature: " + item.temperature);
-        const humidityText = document.createTextNode("Humidity: " + item.humidity);
-        const timestampText = document.createTextNode("TimeStamp: " + item.timestamp);
-        const routeNameText = document.createTextNode("RouteName: " + item.routeName);
-        const infoText = document.createTextNode("Additional Information: " + item.information);
+        nestedUl.className = 'collection with-header';
+        const global_idText= document.createTextNode("Global Id: " + item.global_id);
+        idArray = item.stage_ids;
+
+        li2 = document.createElement('li');
+        li2.appendChild(global_idText);
+        nestedUl.appendChild(li2);
+        li2.className = 'collection-header cyan lighten-5';
 
 
+        for (let i = 0; i<idArray.length;i++){
 
-        const li = document.createElement('li');
-        const li2 = document.createElement('li');
-        const li3 = document.createElement('li');
-        const li4 = document.createElement('li');
-        const li5 = document.createElement('li');
-        const li6 = document.createElement('li');
 
-        liArray = [li,li2,li3,li4,li5,li6];
+            const li = document.createElement('li');
+            const q = document.createElement('i');
 
-        for (i=0; i < liArray.length; i++){
-            liArray[i].className = 'collection-item cyan lighten-5'
+            li.className = 'collection-item cyan lighten-5';
+            li.className += 'secondary-content';
+            q.className += 'material-icons';
+
+            idText = document.createTextNode("----> Stage Id: " + idArray[i]);
+
+            q.innerText = 'directions_boat';
+            li.appendChild(q);
+            li.appendChild(idText);
+            nestedUl.appendChild(li);
+
+
         }
 
-        li.appendChild(messageText);
-        li2.appendChild(temperatureText);
-        li6.appendChild(humidityText);
-        li3.appendChild(timestampText);
-        li4.appendChild(routeNameText);
-        li5.appendChild(infoText);
-
         ul.appendChild(nestedUl);
-
-        nestedUl.className = 'collection'
-
-        nestedUl.appendChild(li);
-        nestedUl.appendChild(li2);
-        nestedUl.appendChild(li3);
-        nestedUl.appendChild(li4);
-        nestedUl.appendChild(li5);
-        nestedUl.appendChild(li6);
-
 
 
 

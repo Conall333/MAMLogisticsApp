@@ -89,6 +89,7 @@ con.query('SELECT * from stage_shipments;', function (error, results, fields) {
 // DELETE FROM global_shipments;
 // DELETE FROM daily_roots;
 // DELETE FROM recent_root;
+// DELETE FROM global_items;
 
 con.query('DELETE FROM recent_root', function (error, results, fields) {
     if (error) throw error;

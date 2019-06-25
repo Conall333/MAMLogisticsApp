@@ -248,49 +248,59 @@ function getShipmentIds() {
 
 
     });
-    con.query('SELECT DISTINCT global_id from global_shipments', function (error, results, fields) {
+    con.query('SELECT Distinct global_id from global_shipments', function (error, results, fields) {
         if (error) throw error;
-        console.log(results);
 
-        let values = {};
-        let stage_id_array = [];
+        let globalArray =[];
+        for (let l = 0; l < results.length; l++) {
 
-        for (let i = 0; i < results.length; i++) {
-
-            values.global_id = results[i].global_id;
-
-            console.log(results[i].global_id);
-
-            con.query('SELECT stage_id from global_shipments WHERE global_id = ?', [results[i].global_id], function (error, res, fields) {
-                if (error) throw error;
-                for (let z = 0; z < res.length; z++) {
-
-                    stage_id_array.push(res[z].stage_id);
-
-                }
-
-                values.stage_ids = stage_id_array;
-                mainWindow.webContents.send('info:Shipments', values);
-                console.log(values);
-                values = {};
-                stage_id_array = [];
-
-
-            });
+            globalArray.push(results[l].global_id)
 
         }
 
-        con.end()
 
-    });
+        infoWindow.webContents.on('did-finish-load', () => {
+
+            for (let i = 0; i < globalArray.length; i++) {
+
+
+                con.query('SELECT stage_id from global_shipments where global_id =?', [globalArray[i]], function (error, results, fields) {
+                    if (error) throw error;
+
+                    let values = {};
+                    let elements =[];
+
+                    values.global_id = globalArray[i];
+
+                    results.forEach(function(element){
+
+                        elements.push(element.stage_id);
+
+                    });
+
+                    values.stage_ids = elements;
+
+                    infoWindow.webContents.send('item:shipments', values);
+                });
+
+            }
+        });
+
+
+
+
+
+
+        });
+
+
+
+
+        //con.end()
+
+
 
 }
-
-
-
-
-
-
 
 
 

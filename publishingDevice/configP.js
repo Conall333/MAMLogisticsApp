@@ -19,6 +19,11 @@ config.sensor_id = 'SHIPPING_SENSOR_1';
 config.mode = 'restricted';
 config.provider = 'https://nodes.thetangle.org:443'; // https://perma.iota.partners:443
 config.altProvider = 'https://www.solidstatedomain.ie:14267';
+config.transportationType ='Shipping Container';
+config.departureLocation = 'Porto de Santos(Brazil)';
+config.destination = "Port of Sines(Portugal)";
+config.itemDescription = "Banana Crate";
+
 
 
 
@@ -36,7 +41,7 @@ let info = JSON.parse(additionalInfo);
 
 config.channelKey = info.channelKey;
 config.path = modules_path;
-config.publishInterval = 600000;
+config.publishInterval = 900000;
 
 const mamState = Mam.init(config.provider,config.seed);
 mamDetails = Mam.create(mamState, 'GETROOT');

@@ -86,12 +86,8 @@ const publish = async packet => {
                 });
 
 
-                let timestamp = {
-                    toSqlString: function () {
-                        return 'CURRENT_TIMESTAMP()';
-                    }
-                };
-                console.log(timestamp);
+                let timestamp = (new Date()).toISOString();
+                timestamp = timestamp.substr(0, timestamp.lastIndexOf("T"));
 
 
                 con.query('SELECT * from daily_roots WHERE stage_id = ? AND date = DATE(NOW());', [config.stageId, timestamp], function (error, results, fields) {
@@ -162,15 +158,17 @@ const publishMessage = async () => {
         stageId: config.stageId,
         routeName: config.routeName,
         timestamp: (new Date()).toLocaleString(),
-        temperature: (Math.random() * (25 - 15) + 15).toFixed(2),
-        humidity: (Math.random() * (47 - 51) + 15).toFixed(2),
+        temperature: (Math.random() * (18 - 12) + 15).toFixed(2),
+        humidity: (Math.random() * (51 - 47) + 47).toFixed(2),
         information: info,
-        departure: "Porto de Santos(Brazil)",
-        destination: "Port of Sines(Portugal)",
+        departure: config.departureLocation,
+        destination: config.destination,
         message_root: thisRoot
     });
     return root
 };
+
+
 
 
 
@@ -195,8 +193,11 @@ function startPublishing(){
                         return;
                     }
 
+                    let timestamp = (new Date()).toISOString();
+                    timestamp = timestamp.substr(0, timestamp.lastIndexOf("T"));
 
-                con.query("UPDATE stage_shipments SET completed = ? AND active = ? WHERE stage_id = ?;", ['Y', 'N', config.stageId], function (error, results, fields) {
+
+                con.query("UPDATE stage_shipments SET completed = ? AND active = ? AND date_completed = ? WHERE stage_id = ?;", ['Y', 'N',timestamp, config.stageId], function (error, results, fields) {
                     if (error) throw error;
                     console.log("Status UPDATED");
                     console.log("Exiting...");
@@ -239,14 +240,22 @@ function startPublishing(){
                             console.log("GLOBAL_SHIPMENTS DETAILS UPDATED")
                         });
 
+
+                        con.query("INSERT INTO global_items (global_id, description) VALUES (?, ?);",[config.globalId,config.itemDescription], function (error, results, fields) {
+                            if (error) throw error;
+                            console.log("GLOBAL_ITEMS UPDATED")
+                        });
+
                         let sensor_id = config.sensor_id;
                         let route_name = config.routeName;
                         let channel_key =config.channelKey;
                         let channel_root = config.root;
                         let stage_id = config.stageId;
-                        let timestamp = { toSqlString: function() { return 'CURRENT_TIMESTAMP()'; } };
+                        let timestamp = (new Date()).toISOString();
+                        timestamp = timestamp.substr(0, timestamp.lastIndexOf("T"));
 
-                        con.query("INSERT INTO stage_shipments (stage_id, route_name, channel_key, root, date, sensor_id, active, completed) VALUES (?, ?, ?, ?, ?, ?, ?, ?);", [stage_id, route_name, channel_key, channel_root, timestamp , sensor_id,'Y','N'],function (error, results, fields) {
+
+                        con.query("INSERT INTO stage_shipments (stage_id, route_name, channel_key, root, date, sensor_id, active, completed, transportation_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);", [stage_id, route_name, channel_key, channel_root, timestamp , sensor_id,'Y','N',config.transportationType],function (error, results, fields) {
                             if (error) throw error;
                             console.log("STAGE_SHIPMENTS DETAILS UPDATED")
                         });
