@@ -199,7 +199,7 @@ function getRootAndKey(stage_id,range,date) {
                 console.log(results);
 
                 received_root = results[0].root;
-                fetchAll(received_key, received_root)
+                fetchDay(received_key, received_root,0);
                 con.end()
 
             });
@@ -421,6 +421,31 @@ async function fetchAll(key,received_root) {
     mainWindow.webContents.send('item:add', item);
     fetchAll(key,next_root);
     
+    }
+    catch(e){
+        console.log("no new message to fetch");
+        console.log(e)
+        //setTimeout(intervalForListening,  config.fetchInterval);
+    }
+}
+async function fetchDay(key,received_root,count) {
+    //output once fetch is completed
+    try{
+        console.log("Fetching...")
+        const result = await Mam.fetchSingle(received_root, mode, key);
+        messageCount += 1;
+        let next_root = result.nextRoot;
+        console.log('Fetched and parsed ==>', JSON.parse(trytesToAscii(result.payload)));
+        item = JSON.parse(trytesToAscii(result.payload));
+        mainWindow.webContents.send('item:add', item);
+        count += 1;
+        if (count !== 97) {
+            fetchDay(key, next_root, count);
+        }
+        else {
+            console.log("fetchedAllMessagesFrom given day");
+        }
+
     }
     catch(e){
         console.log("no new message to fetch");
