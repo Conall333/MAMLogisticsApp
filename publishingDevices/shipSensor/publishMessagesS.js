@@ -1,8 +1,8 @@
 
 const fs = require('fs');
 const path = require('path');
-const config = require('./configT');
-const flavourText = require('./flavourTextT');
+const config = require('./configS');
+const flavourText = require('./flavourTextS');
 var mysql = require('mysql');// time node js library
 
 modules_path = config.path;
@@ -54,7 +54,7 @@ const publish = async packet => {
             await Mam.attach(message.payload, message.address, 3, 14);
             messagePublished = true;
             console.log("Message Published!");
-
+            
 
         } catch (error) {
             console.log(error);
@@ -176,7 +176,7 @@ function startPublishing(){
     publishMessage()
         .then(async root => {
 
-            if (messageCount === 1){
+            if (messageCount === config.endMessage){
 
                 var con = mysql.createConnection({
                     host: 'remotemysql.com',
@@ -197,17 +197,15 @@ function startPublishing(){
                     timestamp = timestamp.substr(0, timestamp.lastIndexOf("T"));
 
 
-
-                    con.query("UPDATE stage_shipments SET completed = ?, active = ?, date_completed = ? WHERE stage_id = ?;", ['Y', 'N',timestamp, config.stageId], function (error, results, fields) {
-                        if (error) throw error;
-                        console.log("Status UPDATED");
-
-                        // in a real world system this handover would be triggered by the scanning of the global_id in the device on the shipping container
-                        startHandover();
+                con.query("UPDATE stage_shipments SET completed = ?, active = ?, date_completed = ? WHERE stage_id = ?;", ['Y', 'N',timestamp, config.stageId], function (error, results, fields) {
+                    if (error) throw error;
+                    console.log("Status UPDATED");
+                    console.log("Exiting...");
+                    process.exit(1)
 
                     });
 
-                });
+            });
 
             }
 
@@ -216,7 +214,7 @@ function startPublishing(){
             // console.log("Next Root: " + result.nextRoot)
             // result.messages.forEach(message => console.log('Fetched and parsed ==>', JSON.parse(trytesToAscii(message))))
 
-            if (mamState.channel.start === config.endMessage) {
+            if (mamState.channel.start === 1) {
                 console.log(`Verify with explorer:\n${mamExplorerLink}${root}\n`);
 
 
@@ -240,12 +238,6 @@ function startPublishing(){
                         con.query("INSERT INTO global_shipments (global_id, stage_id) VALUES (?, ?);",[config.globalId,config.stageId], function (error, results, fields) {
                             if (error) throw error;
                             console.log("GLOBAL_SHIPMENTS DETAILS UPDATED")
-                        });
-
-
-                        con.query("INSERT INTO global_items (global_id, description) VALUES (?, ?);",[config.globalId,config.itemDescription], function (error, results, fields) {
-                            if (error) throw error;
-                            console.log("GLOBAL_ITEMS UPDATED")
                         });
 
                         let sensor_id = config.sensor_id;
@@ -282,24 +274,12 @@ function startPublishing(){
         })
 }
 
-// in a real world system this handover would be achieved by scanning the product's global_id onto the sensor device on the shaping container
-async function startHandover() {
-    console.log("Handover started");
-    await sleep(6000000);
-    let cp = require('child_process');
-    console.log("Started new Process... \n");
-    cp.fork(__dirname + '/../shipSensor/publishMessagesS.js');
-
-}
-
 function intervalForPublishing(){
     startPublishing();
     // X minuite interval to call the function recursively
     // 900000 - 15 minutes
     // 60000 - 1 minute
-    if (messageCount < config.endMessage) {
-        setTimeout(intervalForPublishing, config.publishInterval);
-    }
+    setTimeout(intervalForPublishing, config.publishInterval);
 }
 
 function sleep(ms) {

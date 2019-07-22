@@ -14,13 +14,11 @@ const {asciiToTrytes, trytesToAscii} = require(path.join(modules_path,'converter
 
 config = {};
 
-config.seed = 'ZZZBNX9PKXAATXXTT9KLLTZBPZ99DMMEUXGXI9WUPYVWIGIYQTF9JIRKFEIXRFWQGJJETPVYIXANAKPMH';
-config.channelName = 'MAM_SENSOR_1';
+config.seed = createSeed(81);
+config.channelName = 'SHIPPING_SENSOR_1';
 config.mode = 'restricted';
 config.provider = 'https://nodes.iota.cafe:443';// https://perma.iota.partners:443 //https://nodes.iota.cafe:443 //https://nodes.thetangle.org:443
 config.altProvider = 'https://solidstatedomain.ie:14267';
-config.publicKey ='PUBLIC_KEY_HERE';
-config.clientIdentifier = 'Client XYZ';
 config.fetchInterval = 60000;
 config.path = modules_path;
 config.addressOfPublishingNode = 'HGPRULP9S99WPAESZPBGECUSMTEFQBAUDGHTELIINGSYA9UKGZKRVOSLDJFRNTAFHVLISHPEKMUBBQMRX';
@@ -28,3 +26,14 @@ config.addressOfPublishingNode = 'HGPRULP9S99WPAESZPBGECUSMTEFQBAUDGHTELIINGSYA9
 // receivingNode
 
 module.exports = config;
+
+
+function createSeed(length) {
+    var id           = '';
+    var chars       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ9';
+    var charsLen = chars.length;
+    for ( var i = 0; i < length; i++ ) {
+        id += chars.charAt(Math.floor(Math.random() * charsLen));
+    }
+    return id;
+}

@@ -8,7 +8,7 @@ const {app, BrowserWindow, Menu, ipcMain} = electron;
 
 
 let mainWindow;
-let addWindow;
+let requestWindow;
 let mostRecentWindow;
 let infoWindow;
 channelKey = "";
@@ -46,11 +46,11 @@ app.on('ready', function(){
     Menu.setApplicationMenu(MainMenu);
 });
 
-// Handle createAddWindow
+// Handle createRequestWindow
 
-function createAddWindow(){
+function createRequestWindow(){
     // create new window
-    addWindow = new BrowserWindow({
+    requestWindow = new BrowserWindow({
         webPreferences: {
             nodeIntegration: true
         },
@@ -63,15 +63,15 @@ function createAddWindow(){
     });
 
     // load html into window
-    addWindow.loadURL(url.format({
-        pathname: path.join(__dirname, "addWindow.html"),
+    requestWindow.loadURL(url.format({
+        pathname: path.join(__dirname, "requestWindow.html"),
         protocol: 'file:',
         slashes: true
     }));
 
     // free memory
-    addWindow.on('close', function(){
-        addWindow = null;
+    requestWindow.on('close', function(){
+        requestWindow = null;
     })
 
 }
@@ -87,7 +87,7 @@ function createInfoWindow(){
         height: 300,
         x: 10,
         y: 180,
-        title: 'AdditionalWindow'
+        title: 'Info Window'
 
     })
 
@@ -127,7 +127,7 @@ function createMostRecentWindow(){
 
     // free memory
     mostRecentWindow.on('close', function(){
-        addWindow = null;
+        requestWindow = null;
     })
 
 }
@@ -148,7 +148,7 @@ ipcMain.on('item:sendRequest', function(e, item){
 
 
     //todo create function to send request to db
-    addWindow.close();
+    requestWindow.close();
 });
 
 
@@ -329,7 +329,7 @@ const mainMenuTemplate = [
             {
                 label: 'Open Request Window',
                     click(){
-                    createAddWindow();
+                    createRequestWindow();
                 }
             },
                 {
