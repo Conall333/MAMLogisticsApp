@@ -32,7 +32,27 @@ info = "";
 
 
 // inititalize sate of mam
-let mamState = Mam.init(provider,seed);
+let mamState;
+
+try {
+    mamState = Mam.init(provider, seed);
+}
+catch (e) {
+    console.log(e);
+
+    for (let i=0;i<config.altProviders.length;i++){
+
+        try {
+            mamState = Mam.init(config.altProviders[i], seed);
+            break;
+        }
+        catch (e) {
+            console.log(e)
+
+        }
+
+    }
+}
 
 //change to restricted mode
 mamState = Mam.changeMode(mamState, mode, channelKey);
@@ -176,7 +196,7 @@ function startPublishing(){
     publishMessage()
         .then(async root => {
 
-            if (messageCount === 1){
+            if (messageCount === config.endMessage){
 
                 var con = mysql.createConnection({
                     host: 'remotemysql.com',
@@ -216,7 +236,7 @@ function startPublishing(){
             // console.log("Next Root: " + result.nextRoot)
             // result.messages.forEach(message => console.log('Fetched and parsed ==>', JSON.parse(trytesToAscii(message))))
 
-            if (mamState.channel.start === config.endMessage) {
+            if (mamState.channel.start === 1) {
                 console.log(`Verify with explorer:\n${mamExplorerLink}${root}\n`);
 
 
@@ -292,6 +312,8 @@ async function startHandover() {
 
 }
 
+
+
 function intervalForPublishing(){
     startPublishing();
     // X minuite interval to call the function recursively
@@ -302,6 +324,7 @@ function intervalForPublishing(){
     }
 }
 
+// function to introduce time delay where nessasary
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }

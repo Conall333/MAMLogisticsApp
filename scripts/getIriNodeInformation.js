@@ -2,7 +2,7 @@ const Iota = require('C:/Users/Conal/Documents/test/node_modules/@iota/core');
 const Converter = require('C:/Users/Conal/Documents/test/node_modules/@iota/converter');
 
 const iota = Iota.composeAPI({
-    provider: 'https://nodes.iota.cafe:443'
+    provider: 'https://nodes.thetangle.org:443'
 });
 // Call the `getNodeInfo()` method for information about the IRI node
 iota.getNodeInfo()

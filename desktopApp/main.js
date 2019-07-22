@@ -3,9 +3,7 @@ const url = require("url");
 const path = require("path");
 const mysql = require('mysql');
 
-
 const {app, BrowserWindow, Menu, ipcMain} = electron;
-
 
 let mainWindow;
 let requestWindow;
@@ -399,12 +397,29 @@ const seed =config.seed;
 messageCount = 0;
 
 // inititalize state of mam
-Mam.init(provider,seed);
+try {
+    Mam.init(provider, seed);
+}
+catch (e) {
+    console.log(e);
+
+    for (let i=0;i<config.altProviders.length;i++){
+
+        try {
+            Mam.init(config.altProviders[i], seed);
+            break;
+        }
+        catch (e) {
+            console.log(e)
+
+        }
+
+    }
+}
 
 const iota = Iota.composeAPI({
     provider: config.provider
 });
-
 
 
 
@@ -485,12 +500,6 @@ function fetch(){
     messageCount = 0;
     manageResponse();
 }
-
-
-
-
-
-
 
 
 

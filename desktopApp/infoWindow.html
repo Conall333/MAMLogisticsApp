@@ -54,7 +54,13 @@
 
             idText = document.createTextNode("----> Stage Id: " + idArray[i]);
 
-            q.innerText = 'directions_boat';
+            if (i ===0){
+                q.innerText = 'local_shipping';
+            }
+            else {
+                q.innerText = 'directions_boat';
+            }
+
             li.appendChild(q);
             li.appendChild(idText);
             nestedUl.appendChild(li);

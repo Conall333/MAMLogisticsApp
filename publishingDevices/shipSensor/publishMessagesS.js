@@ -32,7 +32,25 @@ info = "";
 
 
 // inititalize sate of mam
-let mamState = Mam.init(provider,seed);
+try {
+    mamState = Mam.init(provider, seed);
+}
+catch (e) {
+    console.log(e);
+
+    for (let i=0;i<config.altProviders.length;i++){
+
+        try {
+            mamState = Mam.init(config.altProviders[i], seed);
+            break;
+        }
+        catch (e) {
+            console.log(e)
+
+        }
+
+    }
+}
 
 //change to restricted mode
 mamState = Mam.changeMode(mamState, mode, channelKey);
