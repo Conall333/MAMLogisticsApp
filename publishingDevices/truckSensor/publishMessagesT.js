@@ -1,7 +1,8 @@
 
 const fs = require('fs');
 const path = require('path');
-const config = require('./configP');
+const config = require('./configT');
+const flavourText = require('./flavourTextT');
 var mysql = require('mysql');// time node js library
 
 modules_path = config.path;
@@ -18,17 +19,17 @@ const provider = config.provider;
 const seed = config.seed;
 const channelKey = config.channelKey;
 
+
+
 // mam explorer allows you to see all the messages in a mam chain from a given point
 const mamExplorerLink = `https://mam-explorer.firebaseapp.com/?provider=${encodeURIComponent(provider)}&mode=${mode}&key=${channelKey.padEnd(81, '9')}&root=`
 previousMessagePublished = false;
 currentMessage = "";
 // to differentiate messages
 messageCount = 0;
-timePassed = 0;
 thisRoot =  config.root;
 info = "";
 
-rootTimeDictionary = {}; // dictionary to keep track of all the timers
 
 // inititalize sate of mam
 let mamState = Mam.init(provider,seed);
@@ -53,16 +54,15 @@ const publish = async packet => {
             await Mam.attach(message.payload, message.address, 3, 14);
             messagePublished = true;
             console.log("Message Published!");
-            
+
 
         } catch (error) {
             console.log(error);
             console.log("trying to publish again after 60 seconds");
-            await sleep(60000);
+            await sleep(config.retryInterval);
 
         }
     }
-
 
     let con = mysql.createConnection({
         host: 'remotemysql.com',
@@ -71,7 +71,6 @@ const publish = async packet => {
         database: 'cX2lcjOkuC',
         port: '3306'
     });
-
 
     try {
         con.connect(function (err) {
@@ -97,7 +96,7 @@ const publish = async packet => {
 
                         con.query("INSERT INTO daily_roots (stage_id, root, date) VALUES (?, ?,?);", [config.stageId, message.root, timestamp], function (error, results, fields) {
                             if (error) throw error;
-                            console.log("DAILY_ROOTS UPDATED")
+                            console.log("DAILY_ROOTS UPDATED");
                             con.end();
 
                         });
@@ -135,20 +134,21 @@ const publishMessage = async () => {
     messageCount += 1;
     currentMessage = "message " + messageCount;
 
+
     if (messageCount === 1) {
-        info = "Goods have been received, Shipping container will leave soon "
+        info = flavourText.waiting
     }
     if (messageCount === 2){
-        info = "Goods have been received, Shipping container will leave soon "
+        info = flavourText.waiting
     }
     if (messageCount === 3){
-        info = "Shipping container has departed"
+        info = flavourText.departure
     }
     if (messageCount > 3){
-        info = "At Sea"
+        info = flavourText.inRoute
     }
-    if (messageCount === 228){
-        info = "Goods have arrived at their destination"
+    if (messageCount === config.endMessage){
+        info = flavourText.arrived
     }
 
 
@@ -176,7 +176,7 @@ function startPublishing(){
     publishMessage()
         .then(async root => {
 
-            if (messageCount === 228){
+            if (messageCount === config.endMessage){
 
                 var con = mysql.createConnection({
                     host: 'remotemysql.com',
@@ -197,15 +197,20 @@ function startPublishing(){
                     timestamp = timestamp.substr(0, timestamp.lastIndexOf("T"));
 
 
-                con.query("UPDATE stage_shipments SET completed = ? AND active = ? AND date_completed = ? WHERE stage_id = ?;", ['Y', 'N',timestamp, config.stageId], function (error, results, fields) {
-                    if (error) throw error;
-                    console.log("Status UPDATED");
-                    console.log("Exiting...");
-                    process.exit(1)
+                    con.query("UPDATE stage_shipments SET completed = ?, active = ?, date_completed = ? WHERE stage_id = ?;", ['Y', 'N',timestamp, config.stageId], function (error, results, fields) {
+                        if (error) throw error;
+                        console.log("Status UPDATED");
+
+                        // in a real world system this handover would be triggered by the scanning of the global_id in the device on the shipping container
+                        console.log("Handover started");
+                        sleep(6000000);
+                        let cp = require('child_process');
+                        console.log("Started new Process... \n");
+                        cp.fork(__dirname + '/../shipSensor/publishMessagesS.js');
 
                     });
 
-            });
+                });
 
             }
 
@@ -262,7 +267,7 @@ function startPublishing(){
 
                         con.query("INSERT INTO recent_root (stage_id, root) VALUES (?, ?);",[config.stageId,config.root], function (error, results, fields) {
                             if (error) throw error;
-                            console.log("INITIAL RECENT_ROOT SET")
+                            console.log("INITIAL RECENT_ROOT SET");
                             con.end();
 
                         });
@@ -282,10 +287,12 @@ function startPublishing(){
 
 function intervalForPublishing(){
     startPublishing();
-    // 10 minuite interval to call the function recursively
+    // X minuite interval to call the function recursively
     // 900000 - 15 minutes
     // 60000 - 1 minute
-    setTimeout(intervalForPublishing, config.publishInterval);
+    if (messageCount < config.endMessage) {
+        setTimeout(intervalForPublishing, config.publishInterval);
+    }
 }
 
 function sleep(ms) {
