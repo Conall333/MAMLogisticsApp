@@ -1,0 +1,11 @@
+{
+  "name": "publishingdevices",
+  "version": "1.0.0",
+  "description": "for publishin mam messages to the tangle",
+  "main": "publishMessagesT.js",
+  "scripts": {
+    "start": " node shipSensor/generateChannelKeyS.js && node  truckSensor/generateChannelKeyT && node truckSensor/publishMessagesT.js"
+  },
+  "author": "Conall McCarthy",
+  "license": "ISC"
+}
