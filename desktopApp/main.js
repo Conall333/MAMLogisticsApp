@@ -135,9 +135,20 @@ function createMostRecentWindow(){
 ipcMain.on('item:sendRequest', function(e, item){
     console.log(item);
 
-    let id = item.id;
-    let range = item.range;
-    let date = item.date;
+    let id;
+    let range;
+    let date;
+
+    try {
+
+        id = item.id;
+        range = item.range;
+        date = item.date;
+    }
+    catch{
+        console.log("ERROR with request information")
+
+    }
 
 
     getRootAndKey(id,range,date);
@@ -183,8 +194,13 @@ function getRootAndKey(stage_id,range,date) {
         if (error) throw error;
         console.log(results);
 
-        received_key = results[0].channel_key;
-        received_root = results[0].root;
+        try {
+            received_key = results[0].channel_key;
+            received_root = results[0].root;
+        }
+        catch{
+            console.log("Unable to get channel key and root from the database, make sure valid id entered")
+        }
 
 
         if (range === "all") {
@@ -196,8 +212,13 @@ function getRootAndKey(stage_id,range,date) {
                 if (error) throw error;
                 console.log(results);
 
-                received_root = results[0].root;
-                fetchDay(received_key, received_root,0);
+                try {
+
+                    received_root = results[0].root;
+                    fetchDay(received_key, received_root, 0);
+                }catch {
+                    console.log("Unable to fetch")
+                }
                 con.end()
 
             });
@@ -210,8 +231,14 @@ function getRootAndKey(stage_id,range,date) {
                 if (error) throw error;
                 console.log(results);
 
+                try{
+
                 received_root = results[0].root;
                 fetchAll(received_key, received_root);
+
+                }catch {
+                    console.log("Unable to fetch")
+                }
                 con.end()
 
             });
@@ -312,7 +339,7 @@ const mainMenuTemplate = [
         label: 'File',
         submenu:[
                 {
-                    label: 'Clear',
+                    label: 'Clear Main Window',
                     click(){
                         mainWindow.webContents.send('item:clear');
                     }

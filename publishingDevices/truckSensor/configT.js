@@ -56,7 +56,7 @@ const mamState = Mam.init(config.provider,config.seed);
 mamDetails = Mam.create(mamState, 'GETROOT');
 config.root = mamDetails.root;
 config.mamState = mamState;
-config.endMessage = 4; //36
+config.endMessage = 36; //36
 
 
 function createId(length) {
