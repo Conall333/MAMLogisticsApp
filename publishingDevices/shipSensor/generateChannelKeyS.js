@@ -17,7 +17,7 @@ diffHell.generateKeys('ascii');
 key = asciiToTrytes(diffHell.getPublicKey('ascii'));
 
 
-messagesPath = path.join(__dirname,'./channelInfoT.json');
+messagesPath = path.join(__dirname,'./channelInfoS.json');
 var info = require(messagesPath);
 info.channelKey = key;
 
