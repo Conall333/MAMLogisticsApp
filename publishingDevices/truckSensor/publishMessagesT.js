@@ -221,6 +221,7 @@ function startPublishing(){
                     con.query("UPDATE stage_shipments SET completed = ?, active = ?, date_completed = ? WHERE stage_id = ?;", ['Y', 'N',timestamp, config.stageId], function (error, results, fields) {
                         if (error) throw error;
                         console.log("Status UPDATED");
+                        con.end();
 
                         // in a real world system this handover would be triggered by the scanning of the global_id in the device on the shipping container
                         startHandover();
@@ -305,7 +306,7 @@ function startPublishing(){
 // in a real world system this handover would be achieved by scanning the product's global_id onto the sensor device on the shaping container
 async function startHandover() {
     console.log("Handover started");
-    await sleep(6000000);
+    await sleep(3600000);
     let cp = require('child_process');
     console.log("Started new Process... \n");
     cp.fork(__dirname + '/../shipSensor/publishMessagesS.js');

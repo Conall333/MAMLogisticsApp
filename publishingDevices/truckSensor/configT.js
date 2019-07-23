@@ -51,12 +51,12 @@ let info = JSON.parse(additionalInfo);
 config.channelKey = info.channelKey;
 config.path = modules_path;
 config.publishInterval = 900000; // 15 minutes, change for how often you want to publish
-config.retryInterval =60000; // interval to retry after failing to publish
+config.retryInterval = 60000; // interval to retry after failing to publish
 const mamState = Mam.init(config.provider,config.seed);
 mamDetails = Mam.create(mamState, 'GETROOT');
 config.root = mamDetails.root;
 config.mamState = mamState;
-config.endMessage = 36;
+config.endMessage = 4; //36
 
 
 function createId(length) {
