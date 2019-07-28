@@ -22,13 +22,13 @@
                 </p>
                 <p>
                     <label>
-                        <input name="group1" type="radio" id="all" checked />
+                        <input name="group1" type="radio" id="all" />
                         <span>All Messages</span>
                     </label>
                 </p>
                 <p>
                     <label>
-                        <input name="group1" type="radio" id="day" checked />
+                        <input name="group1" type="radio" id="day" />
                         <span>Date</span><input type="date" id="date">
                     </label>
                 </p>
@@ -68,10 +68,23 @@
         }
 
 
-        //todo getStages: requests type 1 , request using global id which gives back all stages ids, routeNames
 
-        //todo getMessages 1. using stage id, which is used to give all messages in that stage
-        // todo 2. using global id, uses all stage id roots to get messages for every stage
+        ipcRenderer.on('forward:stageId', function(e, item){
+
+            console.log("hello");
+
+            let inputField = document.getElementById('item');
+
+            console.log(item);
+
+            inputField.value = item
+
+
+        });
+
+
+
+
 
     </script>
     

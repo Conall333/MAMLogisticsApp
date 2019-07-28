@@ -15,7 +15,7 @@
         </div>
     </nav>
     <div class="container">
-        <ul>
+        <ul id ="ulForIds">
 
         </ul>
     </div>
@@ -25,19 +25,24 @@
 
     const electron = require('electron');
     const {ipcRenderer} = electron;
-    const ul = document.querySelector('ul');
+    const ul = document.getElementById('ulForIds');
 
 
     //add item
     ipcRenderer.on('item:shipments', function(e, item){
+        console.log(item);
         // ul.className = 'collection  cyan lighten-5'
         const nestedUl = document.createElement('ul');
         nestedUl.className = 'collection with-header';
         const global_idText= document.createTextNode("Global Id: " + item.global_id);
+        const global_dateText =document.createTextNode('Date: ' + item.date);
         idArray = item.stage_ids;
 
-        li2 = document.createElement('li');
+        let li2 = document.createElement('li');
         li2.appendChild(global_idText);
+        let dateLi = document.createElement('li');
+        dateLi.appendChild(global_dateText);
+        li2.appendChild(dateLi);
         nestedUl.appendChild(li2);
         li2.className = 'collection-header cyan lighten-5';
 
@@ -47,12 +52,16 @@
 
             const li = document.createElement('li');
             const q = document.createElement('i');
+            const a = document.createElement('a');
 
             li.className = 'collection-item cyan lighten-5';
             li.className += 'secondary-content';
             q.className += 'material-icons';
+            a.className += 'btn-floating btn-large  blue-grey darken-2 waves-effect waves-light';
 
-            idText = document.createTextNode("----> Stage Id: " + idArray[i]);
+
+
+            idText = document.createTextNode(" ---> Stage Id: " + idArray[i]);
 
             if (i ===0){
                 q.innerText = 'local_shipping';
@@ -61,17 +70,35 @@
                 q.innerText = 'directions_boat';
             }
 
-            li.appendChild(q);
+            li.appendChild(a);
+            a.appendChild(q);
             li.appendChild(idText);
             nestedUl.appendChild(li);
+
+            a.addEventListener("click", copyText, false);
 
 
         }
 
         ul.appendChild(nestedUl);
 
+
+
+
+
     });
 
+
+
+    function copyText(event) {
+        let x = event.target.parentNode.parentNode.textContent;
+        let parts = x.split(" ");
+        id = parts[4];
+        console.log(id);
+        //todo send id to request window
+
+        ipcRenderer.send('send:stageId', id);
+    }
 
 
 

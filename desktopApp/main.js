@@ -39,7 +39,7 @@ app.on('ready', function(){
     getShipmentIds();
 
     // build menu from template
-    const MainMenu = Menu.buildFromTemplate(mainMenuTemplate)
+    const MainMenu = Menu.buildFromTemplate(mainMenuTemplate);
     // insert the menu
     Menu.setApplicationMenu(MainMenu);
 });
@@ -54,8 +54,8 @@ function createRequestWindow(){
         },
         width: 300,
         height: 400,
-        x: 10,
-        y: 485,
+        x: 1010,
+        y: 180,
         title: 'Enter Stage Id'
 
     });
@@ -81,8 +81,8 @@ function createInfoWindow(){
         webPreferences: {
             nodeIntegration: true
         },
-        width: 500,
-        height: 300,
+        width: 490,
+        height: 500,
         x: 10,
         y: 180,
         title: 'Info Window'
@@ -131,7 +131,6 @@ function createMostRecentWindow(){
 }
 
 
-// catch item:add
 ipcMain.on('item:sendRequest', function(e, item){
     console.log(item);
 
@@ -158,6 +157,19 @@ ipcMain.on('item:sendRequest', function(e, item){
 
     //todo create function to send request to db
     requestWindow.close();
+});
+
+ipcMain.on('send:stageId', function(e,item){
+    console.log(item);
+
+    createRequestWindow();
+    requestWindow.webContents.once('dom-ready', () => {
+
+        requestWindow.webContents.send('forward:stageId', item);
+    });
+
+
+
 });
 
 
@@ -259,7 +271,8 @@ function getShipmentIds() {
         user: 'cX2lcjOkuC',
         password: 'rS58Cs8XrH',
         database: 'cX2lcjOkuC',
-        port: '3306'
+        port: '3306',
+        timezone: 'Z'
     });
 
     con.connect(function (err) {
@@ -301,11 +314,27 @@ function getShipmentIds() {
 
                         elements.push(element.stage_id);
 
+
                     });
 
                     values.stage_ids = elements;
 
-                    infoWindow.webContents.send('item:shipments', values);
+
+                    con.query('SELECT date from stage_shipments where stage_id =?', [values.stage_ids[0]], function (error, results, fields) {
+                        if (error) throw error;
+
+                        let startDate = results[0].date;
+                        let dateArray = startDate.toDateString().split(" ");
+                        let dateString = dateArray[1] +'-'+dateArray[2]+'-'+dateArray[3];
+
+                        values.date = dateString;
+                        console.log(dateString);
+
+                        infoWindow.webContents.send('item:shipments', values);
+
+
+                    });
+
                 });
 
             }

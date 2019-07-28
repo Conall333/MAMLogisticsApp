@@ -13,8 +13,15 @@
        </div>
    </nav>
    <div class="container">
+       <p class="center-align">
+           <label>
+               <input type="checkbox" class="filled-in" id="tempCheckbox"/>
+               <span>Only Show High Temp</span>
+           </label>
+       </p>
+       <a>Click on a stage_id in the shipping information window to begin</a>
     <ul>
-        <a>Search using a stage_id in the request window to fetch messages </a>
+
     </ul>
     <div>
 
@@ -22,41 +29,60 @@
         const electron = require('electron');
         const {ipcRenderer} = electron;
         const ul = document.querySelector('ul');
+        const checkbox = document.getElementById('tempCheckbox');
 
         //add item
         ipcRenderer.on('item:add', function(e, item){
             // ul.className = 'collection  cyan lighten-5'
-            const nestedUl = document.createElement('ul');
-            const messageText = document.createTextNode("Message No: " + item.message);
-            const temperatureText = document.createTextNode("Temperature: " + item.temperature);
-            const humidityText = document.createTextNode("Humidity: " + item.humidity);
-            const timestampText = document.createTextNode("TimeStamp: " + item.timestamp);
-            const routeNameText = document.createTextNode("RouteName: " + item.routeName);
-            const infoText = document.createTextNode("Additional Information: " + item.information);
 
 
 
-            const li = document.createElement('li');
-            const li2 = document.createElement('li');
-            const li3 = document.createElement('li');
-            const li4 = document.createElement('li');
-            const li5 = document.createElement('li');
-            const li6 = document.createElement('li');
+                const nestedUl = document.createElement('ul');
+                const messageText = document.createTextNode("Message No: " + item.message);
+                const temperatureText = document.createTextNode("Temperature: " + item.temperature);
+                const humidityText = document.createTextNode("Humidity: " + item.humidity);
+                const timestampText = document.createTextNode("TimeStamp: " + item.timestamp);
+                const routeNameText = document.createTextNode("RouteName: " + item.routeName);
+                const infoText = document.createTextNode("Additional Information: " + item.information);
 
-            liArray = [li,li2,li3,li4,li5,li6];
 
-            for (i=0; i < liArray.length; i++){
-                liArray[i].className = 'collection-item cyan lighten-5'
-            }
+                const li = document.createElement('li');
+                const li2 = document.createElement('li');
+                const li3 = document.createElement('li');
+                const li4 = document.createElement('li');
+                const li5 = document.createElement('li');
+                const li6 = document.createElement('li');
 
-            li.appendChild(messageText);
-            li2.appendChild(temperatureText);
-            li6.appendChild(humidityText);
-            li3.appendChild(timestampText);
-            li4.appendChild(routeNameText);
-            li5.appendChild(infoText);
+                liArray = [li, li2, li3, li4, li5, li6];
 
-            ul.appendChild(nestedUl);
+
+                if (item.temperature > 14.88) {
+                    for (i = 0; i < liArray.length; i++) {
+                        liArray[i].className = 'collection-item  red lighten-1'
+                    }
+                } else {
+                    for (i = 0; i < liArray.length; i++) {
+                        liArray[i].className = 'collection-item cyan lighten-5'
+                    }
+                }
+
+
+                li.appendChild(messageText);
+                li2.appendChild(temperatureText);
+                li6.appendChild(humidityText);
+                li3.appendChild(timestampText);
+                li4.appendChild(routeNameText);
+                li5.appendChild(infoText);
+
+
+               if (checkbox.checked === false) {
+                   ul.appendChild(nestedUl);
+               }
+
+               else if (checkbox.checked === true && item.temperature > 14.85) {
+                ul.appendChild(nestedUl);
+
+                }
 
             nestedUl.className = 'collection';
 
@@ -67,7 +93,8 @@
             nestedUl.appendChild(li5);
             nestedUl.appendChild(li6);
 
-            
+
+
 
 
 
