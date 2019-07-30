@@ -31,6 +31,8 @@
         const ul = document.querySelector('ul');
         const checkbox = document.getElementById('tempCheckbox');
 
+        let max_temp = 14.88;
+
         //add item
         ipcRenderer.on('item:add', function(e, item){
             // ul.className = 'collection  cyan lighten-5'
@@ -56,7 +58,7 @@
                 liArray = [li, li2, li3, li4, li5, li6];
 
 
-                if (item.temperature > 14.88) {
+                if (item.temperature > max_temp) {
                     for (i = 0; i < liArray.length; i++) {
                         liArray[i].className = 'collection-item  red lighten-1'
                     }
@@ -79,7 +81,7 @@
                    ul.appendChild(nestedUl);
                }
 
-               else if (checkbox.checked === true && item.temperature > 14.85) {
+               else if (checkbox.checked === true && item.temperature > max_temp) {
                 ul.appendChild(nestedUl);
 
                 }
