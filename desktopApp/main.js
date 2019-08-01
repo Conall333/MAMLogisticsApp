@@ -286,7 +286,7 @@ function getShipmentIds() {
 
 
     });
-    con.query('SELECT Distinct global_id from global_shipments', function (error, results, fields) {
+    con.query('SELECT global_id from global_items order by start_date desc ', function (error, results, fields) {
         if (error) throw error;
 
         let globalArray =[];

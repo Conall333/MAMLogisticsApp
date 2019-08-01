@@ -263,8 +263,11 @@ function startPublishing(){
                             console.log("GLOBAL_SHIPMENTS DETAILS UPDATED")
                         });
 
+                        let timestamp = (new Date()).toISOString();
+                        timestamp = timestamp.substr(0, timestamp.lastIndexOf("T"));
 
-                        con.query("INSERT INTO global_items (global_id, description) VALUES (?, ?);",[config.globalId,config.itemDescription], function (error, results, fields) {
+
+                        con.query("INSERT INTO global_items (global_id, description,start_date) VALUES (?, ?,?);",[config.globalId,config.itemDescription,timestamp], function (error, results, fields) {
                             if (error) throw error;
                             console.log("GLOBAL_ITEMS UPDATED")
                         });
@@ -274,7 +277,8 @@ function startPublishing(){
                         let channel_key =config.channelKey;
                         let channel_root = config.root;
                         let stage_id = config.stageId;
-                        let timestamp = (new Date()).toISOString();
+
+                        timestamp = (new Date()).toISOString();
                         timestamp = timestamp.substr(0, timestamp.lastIndexOf("T"));
 
 
