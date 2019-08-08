@@ -16,7 +16,7 @@ config = {};
 config.seed = createId(81);
 config.sensor_id = 'TEST_SENSOR_1';
 config.mode = 'restricted';
-config.provider = 'http://195.201.114.197:14265'; //https://nodes.thetangle.org:443
+config.provider = 'http://78.46.254.167:14265'; //https://nodes.thetangle.org:443
 config.altProviders = ['https://perma.iota.partners:443','https://node.vanityfive.de:443','https://nodes.iota.cafe:443','https://www.solidstatedomain.ie:14267'];
 
 

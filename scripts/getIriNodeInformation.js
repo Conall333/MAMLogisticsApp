@@ -2,14 +2,14 @@ const Iota = require('C:/Users/Conal/Documents/test/node_modules/@iota/core');
 const Converter = require('C:/Users/Conal/Documents/test/node_modules/@iota/converter');
 
 const iota = Iota.composeAPI({
-    provider: 'http://195.201.114.197:14265'
+    provider: 'http://node06.iotatoken.nl:14265'
 });
-// Call the `getNodeInfo()` method for information about the IRI node
+// Call the `getNodeInfo()` method for information about a IRI node
 iota.getNodeInfo()
 // convert returned object to json
     .then(info => console.log(JSON.stringify(info,null,2)))
     .catch(err => {
-        // Catch any errors
+        // Catch errors
         console.log(err);
     });
 
@@ -38,6 +38,6 @@ iota.prepareTransfers(seed, transfers)
         console.log(`Bundle: ${JSONBundle}`)
     })
     .catch(err => {
-        // Catch any errors
+        // Catch errors
         console.log(err);
     });
