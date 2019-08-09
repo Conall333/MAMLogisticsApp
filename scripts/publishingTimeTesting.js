@@ -1,14 +1,13 @@
 
-const fs = require('fs');
 const path = require('path');
 const config = require('./configTest');
-var mysql = require('mysql');// time node js library
 
 modules_path = config.path;
 
 
 const Mam = require(path.join(modules_path,'mam','lib','mam.client.js'));
 const {asciiToTrytes, trytesToAscii} = require(path.join(modules_path,'converter'));
+const iota = require('iota.lib.js')
 
 // mam mode
 const mode = config.mode;
@@ -44,9 +43,7 @@ logger.warn(config.provider);
 
 // inititalize sate of mam
 
-mamState = Mam.init(provider, seed);
-
-
+mamState = Mam.init({provider,attachToTangle: myAttachFunction}, seed);
 
 
 //change to restricted mode
