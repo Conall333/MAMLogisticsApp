@@ -23,8 +23,6 @@ config.fetchInterval = 60000;
 config.path = modules_path;
 config.addressOfPublishingNode = 'HGPRULP9S99WPAESZPBGECUSMTEFQBAUDGHTELIINGSYA9UKGZKRVOSLDJFRNTAFHVLISHPEKMUBBQMRX';
 
-// receivingNode
-
 module.exports = config;
 
 

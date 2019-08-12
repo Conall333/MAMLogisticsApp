@@ -1,7 +1,7 @@
 {
-  "name": "testproject",
+  "name": "mamShippingApp",
   "version": "1.0.0",
-  "description": "project to learn electron",
+  "description": "mam shipping app",
   "main": "main.js",
   "scripts": {
     "start": "electron ."

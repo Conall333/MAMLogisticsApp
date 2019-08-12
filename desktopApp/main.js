@@ -435,14 +435,11 @@ if(process.env.Node_ENV !== 'production'){
 
 
 
-const fs = require('fs');
 const config = require('./configR');
-// import modules
 const Iota = require(path.join(config.path,'core'));
-const Converter = require(path.join(config.path,'converter'));
 const {asciiToTrytes, trytesToAscii} = require(path.join(config.path,'converter'));
-const extractJSON =  require(path.join(config.path,'extract-json'));
 const Mam = require(path.join(config.path,'mam','lib','mam.client.js'));
+
 const mode = config.mode;
 
 // node that messages will be fetched from

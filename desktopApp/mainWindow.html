@@ -16,10 +16,10 @@
        <p class="center-align">
            <label>
                <input type="checkbox" class="filled-in" id="tempCheckbox"/>
-               <span>Only Show High Temp</span>
+               <span>Only Show Warning Messages</span>
            </label>
        </p>
-       <a>Click on a stage_id in the shipping information window to begin</a>
+       <a id = "userText">Click on a stage_id in the shipping information window to begin</a>
     <ul>
 
     </ul>
@@ -30,14 +30,16 @@
         const {ipcRenderer} = electron;
         const ul = document.querySelector('ul');
         const checkbox = document.getElementById('tempCheckbox');
+        const userText = document.getElementById('userText');
 
-        let max_temp = 14.88;
+        let max_temp = 14.92;
 
         //add item
         ipcRenderer.on('item:add', function(e, item){
             // ul.className = 'collection  cyan lighten-5'
 
 
+                userText.innerText = "";
 
                 const nestedUl = document.createElement('ul');
                 const messageText = document.createTextNode("Message No: " + item.message);
