@@ -16,15 +16,11 @@ config = {};
 config.seed = createId(81);
 config.sensor_id = 'TEST_SENSOR_1';
 config.mode = 'restricted';
-config.provider = 'http://78.46.254.167:14265'; //https://nodes.thetangle.org:443
-config.altProviders = ['https://perma.iota.partners:443','https://node.vanityfive.de:443','https://nodes.iota.cafe:443','https://www.solidstatedomain.ie:14267'];
-
-
 
 config.channelKey = createId(81);
 config.path = modules_path;
-config.publishInterval = 120000; // 15 minutes, change for how often you want to publish
-config.retryInterval =120000; // interval to retry after failing to publish
+config.publishInterval = 180000; // interval for publishing
+config.retryInterval = 180000; // interval to retry after failing to publish
 const mamState = Mam.init(config.provider,config.seed);
 mamDetails = Mam.create(mamState, 'GETROOT');
 config.root = mamDetails.root;
