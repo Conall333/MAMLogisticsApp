@@ -8,7 +8,7 @@ modules_path = config.path;
 
 const Iota = require('C:/Users/Conal/Documents/test/node_modules/@iota/core');
 
-const filename ='I3ResultFormated';
+const filename ='I1.5ResultFormated';
 log4js.configure({
     appenders: { nodeTest: { type: 'file', filename: filename } },
     categories: { default: { appenders: ['nodeTest'], level: 'info' } }
@@ -35,7 +35,7 @@ while(notFinished) {
     try {
 
 
-        let fileString = '3MinutesIntervalTest/I3publishingTest' + fileNumber;
+        let fileString = '1.5MinutesIntervalTest/I1.5publishingTest' + fileNumber;
         fileNumber += 1;
 
 

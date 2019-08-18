@@ -19,7 +19,7 @@ config.mode = 'restricted';
 
 config.channelKey = createId(81);
 config.path = modules_path;
-config.publishInterval = 180000; // interval for publishing
+config.publishInterval = 90000; // interval for publishing
 config.retryInterval = 180000; // interval to retry after failing to publish
 const mamState = Mam.init(config.provider,config.seed);
 mamDetails = Mam.create(mamState, 'GETROOT');

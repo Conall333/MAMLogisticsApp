@@ -52,7 +52,7 @@ thisRoot =  config.root;
 x = Math.floor(Math.random() * 100000);
 info = "";
 
-const filename ='I3publishingTest' + x;
+const filename ='I1.5publishingTest' + x;
 log4js.configure({
     appenders: { nodeTest: { type: 'file', filename: filename } },
     categories: { default: { appenders: ['nodeTest'], level: 'info' } }
@@ -71,7 +71,7 @@ let mamState = Mam.init(provider, seed);
 mamState = Mam.changeMode(mamState, mode, channelKey);
 
 // publishes message
-// uses  different timers, to make sure that if an attach takes a particularly long time, another timer is not reset
+// uses  different timers, to make sure that if an attach takes a particularly long time, another timer is not reset,
 const publish = async packet => {
     // convert message to trytes
     const trytes = asciiToTrytes(JSON.stringify(packet));
@@ -170,11 +170,66 @@ const publish = async packet => {
             }
             else if (attempt === 10) {
                 start_time_10 = new Date().getTime();
-                attempt = 1;
+                attempt += 1;
                 await Mam.attach(message.payload, message.address, 3, 14);
                 published_time_10 = new Date().getTime();
                 console.log("Message Published!");
                 logger.info(published_time_10 - start_time_10);
+
+            }
+            else if (attempt === 11) {
+                start_time_11 = new Date().getTime();
+                attempt += 1;
+                await Mam.attach(message.payload, message.address, 3, 14);
+                published_time_11 = new Date().getTime();
+                console.log("Message Published!");
+                logger.info(published_time_11 - start_time_11);
+
+            }
+            else if (attempt === 9) {
+                start_time_9 = new Date().getTime();
+                attempt += 1;
+                await Mam.attach(message.payload, message.address, 3, 14);
+                published_time_9 = new Date().getTime();
+                console.log("Message Published!");
+                logger.info(published_time_9 - start_time_9);
+
+            }
+            else if (attempt === 12) {
+                start_time_12 = new Date().getTime();
+                attempt += 1;
+                await Mam.attach(message.payload, message.address, 3, 14);
+                published_time_12 = new Date().getTime();
+                console.log("Message Published!");
+                logger.info(published_time_12 - start_time_12);
+
+            }
+            else if (attempt === 13) {
+                start_time_13 = new Date().getTime();
+                attempt += 1;
+                await Mam.attach(message.payload, message.address, 3, 14);
+                published_time_13 = new Date().getTime();
+                console.log("Message Published!");
+                logger.info(published_time_13 - start_time_13);
+
+            }
+            else if (attempt === 14) {
+                start_time_14 = new Date().getTime();
+                attempt += 1;
+                await Mam.attach(message.payload, message.address, 3, 14);
+                published_time_14 = new Date().getTime();
+                console.log("Message Published!");
+                logger.info(published_time_14 - start_time_14);
+
+            }
+
+            else if (attempt === 15) {
+                start_time_15 = new Date().getTime();
+                attempt = 1;
+                await Mam.attach(message.payload, message.address, 3, 14);
+                published_time_15 = new Date().getTime();
+                console.log("Message Published!");
+                logger.info(published_time_15 - start_time_15);
 
             }
 
