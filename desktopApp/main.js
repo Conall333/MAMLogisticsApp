@@ -266,92 +266,92 @@ function getRootAndKey(stage_id,range,date) {
 function getShipmentIds() {
 
 
-    let con = mysql.createConnection({
-        host: 'remotemysql.com',
-        user: 'cX2lcjOkuC',
-        password: 'rS58Cs8XrH',
-        database: 'cX2lcjOkuC',
-        port: '3306',
-        timezone: 'Z'
-    });
-
-    con.connect(function (err) {
-        if (err) {
-            console.error('error connecting: ' + err.stack);
-            return;
-        } else {
-            console.log('connected as id ' + con.threadId);
-
-        }
+    try {
 
 
-    });
-    con.query('SELECT global_id from global_items order by start_date desc ', function (error, results, fields) {
-        if (error) throw error;
+        let con = mysql.createConnection({
+            host: 'remotemysql.com',
+            user: 'cX2lcjOkuC',
+            password: 'rS58Cs8XrH',
+            database: 'cX2lcjOkuC',
+            port: '3306',
+            timezone: 'Z'
+        });
 
-        let globalArray =[];
-        for (let l = 0; l < results.length; l++) {
-
-            globalArray.push(results[l].global_id)
-
-        }
-
-
-        infoWindow.webContents.on('did-finish-load', () => {
-
-            for (let i = 0; i < globalArray.length; i++) {
-
-
-                con.query('SELECT stage_id from global_shipments where global_id =?', [globalArray[i]], function (error, results, fields) {
-                    if (error) throw error;
-
-                    let values = {};
-                    let elements =[];
-
-                    values.global_id = globalArray[i];
-
-                    results.forEach(function(element){
-
-                        elements.push(element.stage_id);
-
-
-                    });
-
-                    values.stage_ids = elements;
-
-
-                    con.query('SELECT date from stage_shipments where stage_id =?', [values.stage_ids[0]], function (error, results, fields) {
-                        if (error) throw error;
-
-                        let startDate = results[0].date;
-                        let dateArray = startDate.toDateString().split(" ");
-                        let dateString = dateArray[1] +'-'+dateArray[2]+'-'+dateArray[3];
-
-                        values.date = dateString;
-                        console.log(dateString);
-
-                        infoWindow.webContents.send('item:shipments', values);
-
-
-                    });
-
-                });
+        con.connect(function (err) {
+            if (err) {
+                console.error('error connecting: ' + err.stack);
+                return;
+            } else {
+                console.log('connected as id ' + con.threadId);
 
             }
-        });
-
-
-
-
 
 
         });
+        con.query('SELECT global_id from global_items order by start_date desc ', function (error, results, fields) {
+            if (error) throw error;
+
+            let globalArray = [];
+            for (let l = 0; l < results.length; l++) {
+
+                globalArray.push(results[l].global_id)
+
+            }
 
 
+            infoWindow.webContents.on('did-finish-load', () => {
 
+                for (let i = 0; i < globalArray.length; i++) {
+
+
+                    con.query('SELECT stage_id from global_shipments where global_id =?', [globalArray[i]], function (error, results, fields) {
+                        if (error) throw error;
+
+                        let values = {};
+                        let elements = [];
+
+                        values.global_id = globalArray[i];
+
+                        results.forEach(function (element) {
+
+                            elements.push(element.stage_id);
+
+
+                        });
+
+                        values.stage_ids = elements;
+
+
+                        con.query('SELECT date from stage_shipments where stage_id =?', [values.stage_ids[0]], function (error, results, fields) {
+                            if (error) throw error;
+
+                            let startDate = results[0].date;
+                            let dateArray = startDate.toDateString().split(" ");
+                            let dateString = dateArray[1] + '-' + dateArray[2] + '-' + dateArray[3];
+
+                            values.date = dateString;
+                            console.log(dateString);
+
+                            infoWindow.webContents.send('item:shipments', values);
+
+
+                        });
+
+                    });
+
+                }
+            });
+
+
+        });
+
+    }
+    catch (e) {
+        console.log("dbError")
+    }
 
         //con.end()
-
 
 
 }

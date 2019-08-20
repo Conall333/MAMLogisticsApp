@@ -37,8 +37,6 @@ const seed = config.seed;
 const channelKey = config.channelKey;
 
 
-
-// mam explorer allows you to see all the messages in a mam chain from a given point
 previousMessagePublished = false;
 currentMessage = "";
 // to differentiate messages
