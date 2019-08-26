@@ -4,10 +4,26 @@ const fs = require('fs');
 
 
 if (process.platform === "linux") {
-    modules_path = '/home/pi/node_modules/@iota'
+
+    try {
+        modules_path =  path.join(__dirname,'node_modules','@iota')
+        const checkIfValidPath = require(path.join(modules_path, 'core'));
+    }
+    catch {
+        console.log("attempting to use backup path");
+        modules_path = '/home/pi/node_modules/@iota'
+    }
 }
 else {
-    modules_path = '@iota'
+
+    try {
+        modules_path =  path.join(__dirname, 'node_modules','@iota')
+        const checkIfValidPath = require(path.join(modules_path, 'core'));
+    }
+    catch {
+        console.log("attempting to use backup path");
+        modules_path = '@iota'
+    }
 }
 
 const {asciiToTrytes, trytesToAscii} = require(path.join(modules_path,'converter'));
