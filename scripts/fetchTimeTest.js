@@ -14,7 +14,7 @@ const {asciiToTrytes, trytesToAscii} = require(path.join(modules_path,'converter
 mode = config.mode;
 // node that will perform pow
 
-nodeNum = 0;
+nodeNum = 1;
 trials = 250;
 
 let fileString = 'nodeNamesFetch';
@@ -75,7 +75,7 @@ async function fetchAll(key,received_root) {
         let perMessage = (timeTaken / results.messages.length).toFixed(2);
         console.log(results.messages.length);
 
-        logger.warn(provider.trim() + " & "+ "0"+" & "+timeTaken+" & "+ perMessage +"\\%\\\\");
+        logger.warn(provider.trim() + " & "+ "0"+" & "+timeTaken+" & "+ perMessage +"\\\\");
 
 
 
