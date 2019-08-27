@@ -14,7 +14,7 @@ const {asciiToTrytes, trytesToAscii} = require(path.join(modules_path,'converter
 mode = config.mode;
 // node that will perform pow
 
-nodeNum = 1;
+nodeNum = 15;
 trials = 250;
 
 let fileString = 'nodeNamesFetch';
