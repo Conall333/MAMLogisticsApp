@@ -14,10 +14,10 @@ const {asciiToTrytes, trytesToAscii} = require(path.join(modules_path,'converter
 mode = config.mode;
 // node that will perform pow
 
-nodeNum = 14;
+nodeNum = 0;
 trials = 250;
 
-let fileString = 'nodeNames';
+let fileString = 'nodeNamesFetch';
 
 providerArray = [];
 
@@ -32,16 +32,19 @@ fs.readFileSync(fileString).toString().split('\n').forEach(function (line) {
 
 // using the same seed will not overwrite previously published messages
 const seed = config.seed;
+
+//root and side_key of mam channel with 250 messages
 sideKey = 'MPJBIDLNZFRAJSDWTKJMEEVFQKTK9CEMKXO9OLZJUYRKFUFCEABNNOJAFL9FJFBWTGSKRFCQXGQDVBSHA';
 root = 'GZTKOSLOCMPZVFQYNGUOBOGA9LR9TE9UGMJDMNSKIUTHGJXMUAUDZX9UDHIACOWUAGZMMMYGRYFZZOYUO';
 
 
 messageCount = 0;
 
+//OutPut FileName
+let filename ='testFetchAll';
 
-// let filename ='testFetchAll';
 
-let filename = "testOneByOne";
+
 log4js.configure({
     appenders: { nodeTest: { type: 'file', filename: filename } },
     categories: { default: { appenders: ['nodeTest'], level: 'info' } }
@@ -54,15 +57,11 @@ const logger = log4js.getLogger('time(ms)');
     let provider = providerArray[nodeNum] ;
 
 
-
-
     Mam.init(provider, seed);
 
 
-    //fetchAll(sideKey,root);
+   fetchAll(sideKey,root);
     console.log(provider);
-
-fetchOneByOneTest();
 
 
 async function fetchAll(key,received_root) {
@@ -83,38 +82,6 @@ async function fetchAll(key,received_root) {
     } catch (e) {
         console.log(e)
         //setTimeout(intervalForListening,  config.fetchInterval);
-    }
-
-}
-
-
-function fetchOneByOneTest() {
-    console.log("Fetching...");
-    starting_time = new Date().getTime();
-    fetchOneByOne(root, sideKey)
-
-
-
-
-}
-
-async function fetchOneByOne(currentRoot,key) {
-    try{
-        const result = await Mam.fetchSingle(currentRoot, mode, key);
-        messageCount += 1;
-        let next_root = result.nextRoot;
-        console.log(JSON.parse(trytesToAscii(result.payload)));
-        fetchOneByOne(next_root,key);
-
-    }
-    catch(e){
-        console.log(e);
-        let fetching_time = new Date().getTime();
-        let timeTaken = ((fetching_time - starting_time) / 1000).toFixed(2);
-        let perMessage = timeTaken / 250;
-        console.log(messageCount);
-        logger.warn(provider.trim() + " & "+ "0"+" & "+timeTaken+" & "+ perMessage +"\\%\\\\");
-
     }
 
 }

@@ -1,0 +1,60 @@
+const path = require('path');
+const config = require('./configTest');
+const log4js = require('log4js');
+const fs = require("fs");
+
+modules_path = config.path;
+
+
+
+
+
+let notFinished = true;
+let fileNumber = 0;
+let totalAvg = 0;
+
+
+
+
+
+    let totalTimePerMessage = 0.00;
+    let totalTime = 0
+
+    try {
+
+
+        let fileString = 'fetchTesting/testFetchAll';
+
+        fs.readFileSync(fileString).toString().split('\n').forEach(function (line) {
+            let lineArray = line.split(" ");
+            console.log(lineArray);
+            totalTime +=  parseFloat(lineArray[8]);
+            totalTimePerMessage += parseFloat(lineArray[10])
+
+
+        });
+
+        averageTotalTime = (totalTime / 20).toFixed(2);
+        averagePerMessageTime = (totalTimePerMessage / 20).toFixed(2);
+        console.log(averageTotalTime);
+        console.log(averagePerMessageTime);
+
+
+    }
+    catch(error){
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

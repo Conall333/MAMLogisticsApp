@@ -2,7 +2,7 @@ const Iota = require('C:/Users/Conal/Documents/test/node_modules/@iota/core');
 const Converter = require('C:/Users/Conal/Documents/test/node_modules/@iota/converter');
 
 const iota = Iota.composeAPI({
-    provider: 'http://node06.iotatoken.nl:14265'
+    provider: 'https://v22018036012963637.bestsrv.de:14267'
 });
 // Call the `getNodeInfo()` method for information about a IRI node
 iota.getNodeInfo()

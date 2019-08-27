@@ -6,8 +6,6 @@ const fs = require("fs");
 modules_path = config.path;
 
 
-const Iota = require('C:/Users/Conal/Documents/test/node_modules/@iota/core');
-
 const filename ='I1.5ResultFormated';
 log4js.configure({
     appenders: { nodeTest: { type: 'file', filename: filename } },
