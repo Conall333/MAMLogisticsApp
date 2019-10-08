@@ -1,3 +1,4 @@
 *.txt linguist-documentation
 *.3 linguist-documentation
 *.1 linguist-documentation
+**/licenses/* linguist-vendored
