@@ -1,6 +1,4 @@
-# mam_logistics_application
-MAM Logistics Application
-
+# MAM Logistics Application
 
 Proof of concept logistics application that shows how IOTA's MAM(Masked Authenticated Message) could be used to manage data produced by IoT devices in the logistics industry. There are two componets of the application, the sotfware that runs on the IoT devices and a desktop application to acess and display the information produced.
 
